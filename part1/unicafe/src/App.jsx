@@ -1,23 +1,32 @@
 import { useState } from "react";
+const StatisticLine = (props) => {
+  return (
+    <p>
+      {props.text} {props.value}
+    </p>
+  );
+};
 const Statistics = (props) => {
   const average = (props.good * 1 + props.bad * -1) / props.all;
   const positive = (props.good / props.all) * 100;
   console.log(average);
   console.log(positive);
+
   if (!isNaN(average) && !isNaN(positive)) {
     return (
       <div>
         <h1>statistics</h1>
-        <p>good {props.good}</p>
-        <p>neutral {props.neutral}</p>
-        <p>bad {props.bad}</p>
-        <p>all {props.all}</p>
-        <p>average {average}</p>
-        <p>positive {positive}%</p>
+        <StatisticLine text="good" value={props.good} />
+        <StatisticLine text="neutral" value={props.neutral} />
+        <StatisticLine text="bad" value={props.bad} />
+        <StatisticLine text="all" value={props.all} />
+        <StatisticLine text="average" value={average} />
+
+        <StatisticLine text="positive" value={positive} />
       </div>
     );
   }
-  return <div>no feedback given</div>;
+  return <div>No feedback Given</div>;
 
   // return
 };
