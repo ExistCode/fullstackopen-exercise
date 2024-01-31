@@ -6,6 +6,7 @@ const App = () => {
   const [neutral, setNeutral] = useState(0);
   const [bad, setBad] = useState(0);
 
+  const ;
   const handleGoodClick = () => {
     setGood(good + 1);
   };
