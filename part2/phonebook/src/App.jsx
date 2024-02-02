@@ -3,16 +3,24 @@ import { useState } from "react";
 const App = () => {
   const [persons, setPersons] = useState([{ name: "Arto Hellas" }]);
   const [newName, setNewName] = useState("");
-  console.log(persons);
 
   const addPersons = (event) => {
     event.preventDefault();
+    const duplicateIndex = persons.findIndex(
+      (person) => person.name === newName
+    );
     const personObject = {
       name: newName,
     };
-    setPersons(persons.concat(personObject));
-    setNewName("");
-    console.log(event.target);
+
+    if (duplicateIndex !== -1) {
+      window.alert(`${newName} already exists`);
+      setNewName();
+    } else {
+      setPersons(persons.concat(personObject));
+      setNewName("");
+      console.log(event.target);
+    }
   };
 
   const handleNewPersons = (event) => {
