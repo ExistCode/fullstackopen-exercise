@@ -8,7 +8,7 @@ const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
-  const [filteredPerson, setFilteredPerson] = useState(persons);
+  const [filteredPerson, setFilteredPerson] = useState([]);
 
   // Fetching data from json-server
   useEffect(() => {
@@ -16,6 +16,7 @@ const App = () => {
     axios.get("http://localhost:3001/persons").then((response) => {
       console.log("Promise fulfilled");
       setPersons(response.data);
+      setFilteredPerson(response.data);
     });
   }, []);
   console.log("rendered", persons.length, "persons");
@@ -58,11 +59,15 @@ const App = () => {
         window.alert(`${newName} or ${newNumber} already exists`);
         setNewName("");
       } else {
-        setPersons(persons.concat(personObject));
-        setFilteredPerson(filteredPerson.concat(personObject));
-        setNewName("");
-        setNewNumber("");
-        console.log(event.target);
+        axios
+          .post("http://localhost:3001/persons", personObject)
+          .then((response) => {
+            console.log(response);
+            setPersons(persons.concat(response.data));
+            setFilteredPerson(filteredPerson.concat(response.data));
+            setNewName("");
+            setNewNumber("");
+          });
       }
     } else {
       window.alert("Input cannot be empty");
