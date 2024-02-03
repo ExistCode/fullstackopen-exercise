@@ -2,9 +2,7 @@ import { useEffect, useState } from "react";
 import Filter from "./components/Filter";
 import AddPersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
-import axios from "axios";
-import { getAll, createNewPerson, update } from "./services/personController";
-
+import personController from "./services/personController";
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
@@ -13,7 +11,7 @@ const App = () => {
 
   // Fetching data from json-server
   useEffect(() => {
-    getAll.then((response) => {
+    personController.getAllPersons().then((response) => {
       setPersons(response.data);
       setFilteredPerson(response.data);
     });
@@ -24,6 +22,28 @@ const App = () => {
   // Handling and setting the hooks
   const handleNewName = (event) => {
     setNewName(event.target.value);
+  };
+
+  // delete Person by Id:
+  const deletePersons = (id) => {
+    const personDeleted = persons.filter((person) => person.id === id);
+    console.log(personDeleted);
+
+    const personName = personDeleted[0].name;
+    const personId = personDeleted[0].id;
+    console.log(personName);
+    console.log(personId);
+    if (
+      window.confirm(
+        `Are you sure you want to delete this person? ${personName}`
+      )
+    ) {
+      personController.removePerson(personId);
+      window.alert(`${personName} deleted successfully`);
+    }
+    setFilteredPerson(
+      filteredPerson.filter((person) => person.id !== personId)
+    );
   };
 
   const handleNewNumber = (event) => {
@@ -58,7 +78,7 @@ const App = () => {
         window.alert(`${newName} or ${newNumber} already exists`);
         setNewName("");
       } else {
-        createNewPerson(personObject).then((response) => {
+        personController.createNewPerson(personObject).then((response) => {
           console.log(response);
           setPersons(persons.concat(response.data));
           setFilteredPerson(filteredPerson.concat(response.data));
@@ -85,7 +105,13 @@ const App = () => {
       <h2>Numbers</h2>
 
       {filteredPerson.map((person) => {
-        return <Persons name={person.name} number={person.number} />;
+        return (
+          <Persons
+            key={person.id}
+            person={person}
+            deleteController={deletePersons}
+          />
+        );
       })}
     </div>
   );

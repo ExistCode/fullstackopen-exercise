@@ -1,8 +1,9 @@
-const Persons = ({ name, number }) => {
+const Persons = ({ person, deleteController }) => {
   return (
-    <p>
-      {name} {number}
-    </p>
+    <li>
+      {person.name} {person.number}{" "}
+      <button onClick={() => deleteController(person.id)}>delete</button>
+    </li>
   );
 };
 
