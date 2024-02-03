@@ -3,6 +3,7 @@ import Filter from "./components/Filter";
 import AddPersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
 import axios from "axios";
+import { getAll, createNewPerson, update } from "./services/personController";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -12,9 +13,7 @@ const App = () => {
 
   // Fetching data from json-server
   useEffect(() => {
-    console.log("Effect happens");
-    axios.get("http://localhost:3001/persons").then((response) => {
-      console.log("Promise fulfilled");
+    getAll.then((response) => {
       setPersons(response.data);
       setFilteredPerson(response.data);
     });
@@ -59,15 +58,13 @@ const App = () => {
         window.alert(`${newName} or ${newNumber} already exists`);
         setNewName("");
       } else {
-        axios
-          .post("http://localhost:3001/persons", personObject)
-          .then((response) => {
-            console.log(response);
-            setPersons(persons.concat(response.data));
-            setFilteredPerson(filteredPerson.concat(response.data));
-            setNewName("");
-            setNewNumber("");
-          });
+        createNewPerson(personObject).then((response) => {
+          console.log(response);
+          setPersons(persons.concat(response.data));
+          setFilteredPerson(filteredPerson.concat(response.data));
+          setNewName("");
+          setNewNumber("");
+        });
       }
     } else {
       window.alert("Input cannot be empty");
