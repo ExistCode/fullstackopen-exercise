@@ -11,13 +11,13 @@ const App = () => {
 
   // Fetching data from json-server
   useEffect(() => {
-    personController.getAllPersons().then((response) => {
-      setPersons(response.data);
-      setFilteredPerson(response.data);
+    personController.getAllPersons().then((person) => {
+      setPersons(person);
+      setFilteredPerson(person);
     });
   }, []);
-  console.log("rendered", persons.length, "persons");
-  console.log(persons);
+  // console.log("rendered", persons.length, "persons");
+  // console.log(persons);
 
   // Handling and setting the hooks
   const handleNewName = (event) => {
@@ -66,24 +66,49 @@ const App = () => {
 
   const submitPersons = (event) => {
     event.preventDefault();
-    const duplicateIndex = persons.findIndex((person) => {
-      return person.name === newName || person.number === newNumber; // Combine conditions
-    });
-    const personObject = {
-      name: newName,
-      number: newNumber,
-    };
+    const person = persons.filter((person) => person.name === newName);
+
+    const personToAdd = person[0];
+    const updatedPerson = { ...personToAdd, number: newNumber };
+
     if (newName !== "" && newNumber !== "") {
-      if (duplicateIndex !== -1) {
-        window.alert(`${newName} or ${newNumber} already exists`);
-        setNewName("");
+      if (person.length !== 0) {
+        if (
+          window.confirm(
+            `${personToAdd.name} already exists on the phonebook. You want to update the phone number?`
+          )
+        ) {
+          personController
+            .updatePerson(updatedPerson.id, updatedPerson)
+            .then((personToAdd) => {
+              console.log(`${personToAdd.name} updated)`);
+              window.alert(`${personToAdd.name} is already updated`);
+              setFilteredPerson(
+                persons.map((updatedPerson) =>
+                  updatedPerson.id !== personToAdd.id
+                    ? updatedPerson
+                    : personToAdd
+                )
+              );
+              setNewName("");
+              setNewNumber("");
+              setPersons(filteredPerson);
+            });
+        }
       } else {
-        personController.createNewPerson(personObject).then((response) => {
-          console.log(response);
-          setPersons(persons.concat(response.data));
-          setFilteredPerson(filteredPerson.concat(response.data));
+        const personToAdd = {
+          name: newName,
+          number: newNumber,
+        };
+        console.log(personToAdd);
+        personController.createNewPerson(personToAdd).then((person) => {
+          console.log(person.name);
+          setFilteredPerson(persons.concat(person));
+          setPersons(filteredPerson);
+          console.log(person);
           setNewName("");
           setNewNumber("");
+          window.alert(`${person.name} successfully added`);
         });
       }
     } else {
@@ -95,6 +120,7 @@ const App = () => {
     <div>
       <h2>Phonebook</h2>
       <Filter onChange={filterBySearch} />
+      <br />
       <AddPersonForm
         onSubmit={submitPersons}
         newName={newName}
@@ -102,6 +128,7 @@ const App = () => {
         newNumber={newNumber}
         handleNewNumber={handleNewNumber}
       />
+      <br />
       <h2>Numbers</h2>
 
       {filteredPerson.map((person) => {
