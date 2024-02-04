@@ -3,11 +3,15 @@ import Filter from "./components/Filter";
 import AddPersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
 import personController from "./services/personController";
+import Notification from "./components/Notification";
+import "./index.css";
+
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [filteredPerson, setFilteredPerson] = useState([]);
+  const [errorMessage, setErrorMessage] = useState(null);
 
   // Fetching data from json-server
   useEffect(() => {
@@ -41,9 +45,14 @@ const App = () => {
       personController.removePerson(personId);
       window.alert(`${personName} deleted successfully`);
     }
+    setErrorMessage(`${personName} deleted successfully`);
+    setTimeout(() => {
+      setErrorMessage(null);
+    }, 5000);
     setFilteredPerson(
       filteredPerson.filter((person) => person.id !== personId)
     );
+    setPersons(filteredPerson);
   };
 
   const handleNewNumber = (event) => {
@@ -63,7 +72,7 @@ const App = () => {
 
     setFilteredPerson(updatedPerson);
   };
-
+  console.log(errorMessage);
   const submitPersons = (event) => {
     event.preventDefault();
     const person = persons.filter((person) => person.name === newName);
@@ -90,6 +99,10 @@ const App = () => {
                     : personToAdd
                 )
               );
+              setErrorMessage(`${personToAdd.name} updated successfully`);
+              setTimeout(() => {
+                setErrorMessage(null);
+              }, 5000);
               setNewName("");
               setNewNumber("");
               setPersons(filteredPerson);
@@ -102,10 +115,13 @@ const App = () => {
         };
         console.log(personToAdd);
         personController.createNewPerson(personToAdd).then((person) => {
-          console.log(person.name);
+          setErrorMessage(`${personToAdd.name} added successfully`);
+          setTimeout(() => {
+            setErrorMessage(null);
+          }, 5000);
           setFilteredPerson(persons.concat(person));
           setPersons(filteredPerson);
-          console.log(person);
+
           setNewName("");
           setNewNumber("");
           window.alert(`${person.name} successfully added`);
@@ -119,6 +135,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={errorMessage} />
       <Filter onChange={filterBySearch} />
       <br />
       <AddPersonForm
