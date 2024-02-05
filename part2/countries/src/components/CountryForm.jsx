@@ -1,4 +1,6 @@
 const CountryForm = ({ country }) => {
+  const api_key = import.meta.env.VITE_WEATHER_APP_API;
+  console.log(`API key: ${api_key}`);
   return (
     <div>
       <h1>{country.name.common}</h1>
