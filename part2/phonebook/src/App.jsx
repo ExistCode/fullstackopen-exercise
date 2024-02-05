@@ -106,6 +106,20 @@ const App = () => {
               setNewName("");
               setNewNumber("");
               setPersons(filteredPerson);
+            })
+            .catch((error) => {
+              console.log(error);
+              setFilteredPerson(
+                persons.filter((person) => person.id !== updatedPerson.id)
+              );
+              setNewName("");
+              setNewNumber("");
+              setErrorMessage(
+                `Information of ${updatedPerson.name} has already been deleted`
+              );
+              setTimeout(() => {
+                setErrorMessage(null);
+              }, 5000);
             });
         }
       } else {
@@ -114,18 +128,27 @@ const App = () => {
           number: newNumber,
         };
         console.log(personToAdd);
-        personController.createNewPerson(personToAdd).then((person) => {
-          setErrorMessage(`${personToAdd.name} added successfully`);
-          setTimeout(() => {
-            setErrorMessage(null);
-          }, 5000);
-          setFilteredPerson(persons.concat(person));
-          setPersons(filteredPerson);
+        personController
+          .createNewPerson(personToAdd)
+          .then((person) => {
+            setErrorMessage(`${personToAdd.name} added successfully`);
+            setTimeout(() => {
+              setErrorMessage(null);
+            }, 5000);
+            setFilteredPerson(persons.concat(person));
+            setPersons(filteredPerson);
 
-          setNewName("");
-          setNewNumber("");
-          window.alert(`${person.name} successfully added`);
-        });
+            setNewName("");
+            setNewNumber("");
+            window.alert(`${person.name} successfully added`);
+          })
+          .catch((error) => {
+            setMessage(`[ERROR] ${error.response.data.error}`);
+            setTimeout(() => {
+              setMessage(null);
+            }, 5000);
+            console.log(error.response.data);
+          });
       }
     } else {
       window.alert("Input cannot be empty");
