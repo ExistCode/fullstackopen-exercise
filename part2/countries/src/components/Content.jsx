@@ -1,5 +1,5 @@
 import CountryForm from "./CountryForm";
-const Content = ({ countries }) => {
+const Content = ({ countries, setCountries }) => {
   if (countries.length > 10) {
     return <p>Too many matches, specify another filter</p>;
   } else if (countries.length >= 2 && countries.length < 10) {
@@ -9,7 +9,7 @@ const Content = ({ countries }) => {
           <li key={i}>
             {" "}
             {country.name.common}{" "}
-            {/* <button onClick={() => setCountries([country])}>show</button> */}
+            <button onClick={() => setCountries([country])}>show</button>
           </li>
         ))}
       </ul>

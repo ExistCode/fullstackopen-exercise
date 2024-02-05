@@ -34,7 +34,10 @@ function App() {
     return (
       <div>
         <Filter value={filter} handleCountry={handleCountry} />
-        <Content countries={filter === "" ? allCountries : countries} />
+        <Content
+          countries={filter === "" ? allCountries : countries}
+          setCountries={setCountries}
+        />
       </div>
     );
   } else {
