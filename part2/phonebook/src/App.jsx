@@ -20,8 +20,8 @@ const App = () => {
       setFilteredPerson(person);
     });
   }, []);
-  // console.log("rendered", persons.length, "persons");
-  // console.log(persons);
+  console.log("rendered", persons.length, "persons");
+  console.log(persons);
 
   // Handling and setting the hooks
   const handleNewName = (event) => {
@@ -31,19 +31,15 @@ const App = () => {
   // delete Person by Id:
   const deletePersons = (id) => {
     const personDeleted = persons.filter((person) => person.id === id);
-    console.log(personDeleted);
-
     const personName = personDeleted[0].name;
     const personId = personDeleted[0].id;
-    console.log(personName);
-    console.log(personId);
+
     if (
       window.confirm(
         `Are you sure you want to delete this person? ${personName}`
       )
     ) {
       personController.removePerson(personId);
-      window.alert(`${personName} deleted successfully`);
     }
     setErrorMessage(`${personName} deleted successfully`);
     setTimeout(() => {
@@ -91,7 +87,6 @@ const App = () => {
             .updatePerson(updatedPerson.id, updatedPerson)
             .then((personToAdd) => {
               console.log(`${personToAdd.name} updated)`);
-              window.alert(`${personToAdd.name} is already updated`);
               setFilteredPerson(
                 persons.map((updatedPerson) =>
                   updatedPerson.id !== personToAdd.id
@@ -137,10 +132,8 @@ const App = () => {
             }, 5000);
             setFilteredPerson(persons.concat(person));
             setPersons(filteredPerson);
-
             setNewName("");
             setNewNumber("");
-            window.alert(`${person.name} successfully added`);
           })
           .catch((error) => {
             setMessage(`[ERROR] ${error.response.data.error}`);
