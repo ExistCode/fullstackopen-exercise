@@ -1,6 +1,9 @@
 const http = require("http");
+const express = require("express");
 
-let phoneBook = [
+const app = express();
+
+let persons = [
   {
     id: 1,
     name: "Arto Hellas",
@@ -22,11 +25,30 @@ let phoneBook = [
     number: "39-23-6423122",
   },
 ];
-const app = http.createServer((request, response) => {
-  response.writeHead(200, { "Content-Type": "application/json" });
-  response.end(JSON.stringify(phoneBook));
+
+app.get("/", (request, response) => {
+  response.send("<h1>Hello World!</h1>");
+});
+
+app.get("/info", (request, response) => {
+  const currentDate = new Date().toLocaleString();
+  const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  response.send(
+    `
+            <div>
+                <p>Phonebook has info for ${persons.length} people</p>
+            </div>
+            <div>
+                <p>${currentDate} (${timeZone})</p>
+            </div>`
+  );
+});
+
+app.get("/api/persons", (request, response) => {
+  response.json(persons);
 });
 
 const PORT = 3001;
-app.listen(PORT);
-console.log(`Server running on port ${PORT}`);
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
