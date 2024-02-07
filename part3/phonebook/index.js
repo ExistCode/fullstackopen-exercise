@@ -27,7 +27,7 @@ let persons = [
   },
 ];
 const generateId = () => {
-  const maxId = notes.length > 0 ? Math.max(...notes.map((n) => n.id)) : 0;
+  const maxId = persons.length > 0 ? Math.max(...persons.map((n) => n.id)) : 0;
   return maxId + 1;
 };
 app.post("/api/persons", (request, response) => {
@@ -35,12 +35,18 @@ app.post("/api/persons", (request, response) => {
   const personName = body.name;
   const personNumber = body.number;
 
-  if (!body.content) {
+  console.log(generateId());
+  if (!personName || !personNumber) {
     return response.status(400).json({
       error: "content missing",
     });
   }
 
+  const duplicatePerson = persons.filter((p) => p.name === personName);
+
+  if (duplicatePerson.length > 0) {
+    return response.status(400).json({ error: "name must be unique" });
+  }
   const person = {
     name: personName,
     number: personNumber,
